@@ -962,31 +962,76 @@
                             "$ref": "#/components/schemas/Article"
                         }
                     },
-                    "current_page": {
-                        "type": "integer"
+                    "links": {
+                        "properties": {
+                            "first": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "last": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "prev": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "next": {
+                                "type": "string",
+                                "nullable": true
+                            }
+                        },
+                        "type": "object"
                     },
-                    "last_page": {
-                        "type": "integer"
-                    },
-                    "per_page": {
-                        "type": "integer"
-                    },
-                    "total": {
-                        "type": "integer"
-                    },
-                    "first_page_url": {
-                        "type": "string"
-                    },
-                    "last_page_url": {
-                        "type": "string"
-                    },
-                    "next_page_url": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "prev_page_url": {
-                        "type": "string",
-                        "nullable": true
+                    "meta": {
+                        "properties": {
+                            "current_page": {
+                                "type": "integer"
+                            },
+                            "from": {
+                                "type": "integer",
+                                "nullable": true
+                            },
+                            "last_page": {
+                                "type": "integer"
+                            },
+                            "links": {
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "url": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "label": {
+                                            "type": "string"
+                                        },
+                                        "page": {
+                                            "type": "integer",
+                                            "nullable": true
+                                        },
+                                        "active": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "path": {
+                                "type": "string"
+                            },
+                            "per_page": {
+                                "type": "integer"
+                            },
+                            "to": {
+                                "type": "integer",
+                                "nullable": true
+                            },
+                            "total": {
+                                "type": "integer"
+                            }
+                        },
+                        "type": "object"
                     }
                 },
                 "type": "object"

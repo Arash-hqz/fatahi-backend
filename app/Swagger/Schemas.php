@@ -8,15 +8,41 @@ use OpenApi\Annotations as OA;
  * @OA\Schema(
  *   schema="PaginatedArticles",
  *   type="object",
- *   @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Article")),
- *   @OA\Property(property="current_page", type="integer"),
- *   @OA\Property(property="last_page", type="integer"),
- *   @OA\Property(property="per_page", type="integer"),
- *   @OA\Property(property="total", type="integer"),
- *   @OA\Property(property="first_page_url", type="string"),
- *   @OA\Property(property="last_page_url", type="string"),
- *   @OA\Property(property="next_page_url", type="string", nullable=true),
- *   @OA\Property(property="prev_page_url", type="string", nullable=true)
+ *   @OA\Property(
+ *     property="data",
+ *     type="array",
+ *     @OA\Items(ref="#/components/schemas/Article")
+ *   ),
+ *   @OA\Property(
+ *     property="links",
+ *     type="object",
+ *     @OA\Property(property="first", type="string", nullable=true),
+ *     @OA\Property(property="last", type="string", nullable=true),
+ *     @OA\Property(property="prev", type="string", nullable=true),
+ *     @OA\Property(property="next", type="string", nullable=true)
+ *   ),
+ *   @OA\Property(
+ *     property="meta",
+ *     type="object",
+ *     @OA\Property(property="current_page", type="integer"),
+ *     @OA\Property(property="from", type="integer", nullable=true),
+ *     @OA\Property(property="last_page", type="integer"),
+ *     @OA\Property(
+ *       property="links",
+ *       type="array",
+ *       @OA\Items(
+ *         type="object",
+ *         @OA\Property(property="url", type="string", nullable=true),
+ *         @OA\Property(property="label", type="string"),
+ *         @OA\Property(property="page", type="integer", nullable=true),
+ *         @OA\Property(property="active", type="boolean")
+ *       )
+ *     ),
+ *     @OA\Property(property="path", type="string"),
+ *     @OA\Property(property="per_page", type="integer"),
+ *     @OA\Property(property="to", type="integer", nullable=true),
+ *     @OA\Property(property="total", type="integer")
+ *   )
  * )
  *
  * @OA\Schema(
