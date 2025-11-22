@@ -15,6 +15,10 @@ use App\Repositories\ProjectRepository;
 use App\Services\ArticleService;
 use App\Services\ProductService;
 use App\Services\ProjectService;
+use App\Contracts\Repositories\UserRepositoryInterface;
+use App\Repositories\UserRepository;
+use App\Contracts\Services\AuthServiceInterface;
+use App\Services\AuthService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,11 +31,14 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ArticleRepositoryInterface::class, ArticleRepository::class);
         $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
         $this->app->bind(ProjectRepositoryInterface::class, ProjectRepository::class);
+        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
 
         // Bind services to interfaces
         $this->app->bind(ArticleServiceInterface::class, ArticleService::class);
         $this->app->bind(ProductServiceInterface::class, ProductService::class);
         $this->app->bind(ProjectServiceInterface::class, ProjectService::class);
+        // Auth service binding
+        $this->app->bind(AuthServiceInterface::class, AuthService::class);
     }
 
     /**

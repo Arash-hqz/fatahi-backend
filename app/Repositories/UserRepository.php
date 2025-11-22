@@ -2,53 +2,45 @@
 
 namespace App\Repositories;
 
+use App\Contracts\Repositories\UserRepositoryInterface;
 use App\Models\User;
 
-class UserRepository
+class UserRepository implements UserRepositoryInterface
 {
+    public function findByEmail(string $email): ?User
+    {
+        return User::where('email', $email)->first();
+    }
+
+    public function create(array $data): User
+    {
+        return User::create($data);
+    }
+
     public function all()
     {
         return User::all();
     }
 
-    public function create(array $data)
-    {
-        return User::create($data);
-    }
-
-    public function update($id, array $data)
-    {
-        $user = User::find($id);
-        if (! $user) return null;
-        $user->update($data);
-        return $user;
-    }
-
-    public function find($id)
+    public function find($id): ?User
     {
         return User::find($id);
     }
 
-    public function delete($id)
+    public function delete($id): bool
     {
         $user = User::find($id);
-        if ($user) {
-            return $user->delete();
-        }
-        return false;
+        if (! $user) return false;
+        return (bool) $user->delete();
     }
 
-    public function updateRole($id, $role)
+    public function updateRole($id, $roles): ?User
     {
         $user = User::find($id);
         if (! $user) return null;
-        // Use Spatie roles/permissions instead of storing raw role
-        if (method_exists($user, 'syncRoles')) {
-            $user->syncRoles([$role]);
-        } else {
-            $user->role = $role;
-            $user->save();
-        }
+        $user->syncRoles($roles);
+        $user->refresh();
         return $user;
     }
 }
+

@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateRoleRequest;
 use App\Http\Resources\UserResource;
-use App\Repositories\UserRepository;
+use App\Contracts\Repositories\UserRepositoryInterface;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
     protected $repo;
 
-    public function __construct(UserRepository $repo)
+    public function __construct(UserRepositoryInterface $repo)
     {
         $this->repo = $repo;
     }
