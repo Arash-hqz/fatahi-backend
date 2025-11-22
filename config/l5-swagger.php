@@ -11,7 +11,7 @@ return [
                 'api' => 'api/documentation',
             ],
             'paths' => [
-                'use_absolute_path' => false,
+                'use_absolute_path' => true,
                 'docs_json' => 'api-docs.json',
                 'docs_yaml' => 'api-docs.yaml',
                 'format_to_use_for_docs' => 'json',
@@ -24,7 +24,7 @@ return [
                     'bearerAuth' => []
                 ]
             ],
-            'generate_always' => false,
+            'generate_always' => true,
             'swagger_version' => '3.0',
         ],
     ],
