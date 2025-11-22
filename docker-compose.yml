@@ -2,8 +2,8 @@ services:
   app:
     build:
       context: ./.docker/php
-    image: fatah_app:latest
-    container_name: fatah_app
+    image: fattah_app:latest
+    container_name: fattah_app
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
@@ -13,35 +13,35 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
+      - mysql
     entrypoint: ["/usr/local/bin/entrypoint.sh"]
     command: ["php-fpm"]
 
   web:
     image: nginx:stable-alpine
-    container_name: fatah_nginx
+    container_name: fattah_nginx
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "${HTTP_WEB_FORWARD:-8080}:80"
     volumes:
       - ./:/var/www/html:ro
       - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - app
 
-  db:
+  mysql:
     image: mysql:latest
-    container_name: fatah_db
+    container_name: fattah_db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: laravel
-      MYSQL_USER: laravel
-      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-secret}"
+      MYSQL_DATABASE: "${DB_DATABASE}"
+      MYSQL_USER: "${DB_USERNAME}"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
     volumes:
-      - dbdata:/var/lib/mysql
+      - fattah_data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "${DB_PORT_FORWARD:-3306}:3306"
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
@@ -49,7 +49,7 @@ services:
       retries: 5
 
 volumes:
-  dbdata:
+  fattah_data:
 
 networks:
   default:
