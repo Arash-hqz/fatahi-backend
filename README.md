@@ -59,6 +59,42 @@ Once the setup is complete, you can access the application by opening your brows
 
 - **Application**: http://localhost:8080
 
+## API Documentation (Swagger / OpenAPI)
+
+این پروژه از پکیج **L5-Swagger** برای تولید مستندات OpenAPI استفاده می‌کند.
+
+### نصب وابستگی (اگر انجام نشده است)
+```bash
+composer install
+```
+
+### تولید مستندات
+```bash
+php artisan l5-swagger:generate
+```
+
+### مسیر مشاهده مستندات
+پس از تولید، مستندات از طریق مرورگر در مسیر زیر قابل مشاهده است:
+```
+http://localhost:8080/api/documentation
+```
+
+### بروزرسانی خودکار هنگام توسعه (اختیاری)
+برای تولید مجدد در هر بار تغییر می‌توانید مقدار `generate_always` را در فایل `config/l5-swagger.php` برابر `true` قرار دهید (این کار در محیط تولید توصیه نمی‌شود).
+
+### امنیت
+برای فراخوانی اکثر مسیرهای تحت `admin/` باید هدر زیر را ارسال کنید:
+```
+Authorization: Bearer <JWT_TOKEN>
+```
+
+### محل Annotation ها
+- پایه: `app/Http/Controllers/Controller.php`
+- مدل‌ها و اسکیمای پاسخ: `app/Swagger/Schemas.php`
+- عملیات و مسیرها: `app/Swagger/Operations.php`
+
+در صورت افزودن کنترلر یا مسیر جدید، فقط کافی است Annotation متناظر را در یکی از فایل‌های فوق اضافه کنید و فرمان تولید را دوباره اجرا نمایید.
+
 ## Development Commands
 
 - **Stop the containers**:

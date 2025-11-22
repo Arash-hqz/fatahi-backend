@@ -8,9 +8,7 @@
 ##   USE_EXEC=true             # use `docker-compose exec` instead of `run`
 ##   ARGS="--step=1"         # additional args passed to artisan
 
-.PHONY: db-migrate db-rollback db-fresh db-seed artisan
- .PHONY: db-refresh
- .PHONY: test
+.PHONY: db-migrate db-rollback db-fresh db-seed artisan db-refresh test swagger swagger-exec
 
 ARGS ?=
 USE_EXEC ?= false
@@ -52,3 +50,8 @@ artisan:
 test:
 	@echo "Running phpunit tests inside app container..."
 	$(RUN_CMD) ./vendor/bin/phpunit --testdox
+
+swagger:
+	@echo "Generating OpenAPI docs (using run) inside app container..."
+	$(DB_COMPOSE) php artisan l5-swagger:generate
+
