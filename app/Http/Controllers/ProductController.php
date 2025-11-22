@@ -4,64 +4,57 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateProductRequest;
 use App\Http\Resources\ProductResource;
-use App\Models\Product;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
+    protected $service;
+
+    public function __construct(ProductService $service)
+    {
+        $this->service = $service;
+    }
+
     public function index()
     {
-        return ProductResource::collection(Product::all());
+        $collection = ProductResource::collection($this->service->all());
+        $data = $collection->toArray(request());
+        if (! auth()->check()) {
+            $keys = ['id', 'title', 'price', 'imageUrl', 'createdAt'];
+            $data = array_map(fn($item) => array_intersect_key($item, array_flip($keys)), $data);
+        }
+        return response()->json($data);
     }
 
     public function store(CreateProductRequest $request)
     {
         $data = $request->validated();
-        $imageUrl = null;
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('products', 'public');
-            $imageUrl = Storage::url($path);
-        }
+        $image = $request->file('image') ?? null;
+        $product = $this->service->create($data, $image);
 
-        $product = Product::create([
-            'title' => $data['title'],
-            'description' => $data['description'],
-            'price' => $data['price'] ?? 0,
-            'image' => $path ?? null,
-        ]);
-
-        $resp = new ProductResource($product);
-        $arr = $resp->toArray(request());
-        $arr['imageUrl'] = $imageUrl;
-
-        return response()->json($arr, 201);
+        return (new ProductResource($product))->response()->setStatusCode(201);
     }
 
     public function show($id)
     {
-        $product = Product::find($id);
+        $product = $this->service->find($id);
         if (! $product) return response()->json(['message' => 'Not found'], 404);
-        $resp = new ProductResource($product);
-        $arr = $resp->toArray(request());
-        $arr['imageUrl'] = $product->image ? Storage::url($product->image) : null;
-        return $arr;
+        return new ProductResource($product);
     }
 
     public function update(Request $request, $id)
     {
-        $product = Product::find($id);
+        $product = $this->service->find($id);
         if (! $product) return response()->json(['message' => 'Not found'], 404);
-        $data = $request->all();
-        $product->update($data);
-        return new ProductResource($product);
+        $image = $request->file('image') ?? null;
+        $updated = $this->service->update($id, $request->all(), $image);
+        return new ProductResource($updated);
     }
 
     public function destroy($id)
     {
-        $product = Product::find($id);
-        if (! $product) return response()->json(['message' => 'Not found'], 404);
-        $product->delete();
-        return response()->json(['message' => 'Deleted']);
+        if ($this->service->delete($id)) return response()->json(['message' => 'Deleted']);
+        return response()->json(['message' => 'Not found'], 404);
     }
 }

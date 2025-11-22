@@ -14,5 +14,6 @@ class Project extends Model
         'description',
         'status',
         'image',
+        'user_id',
     ];
 }

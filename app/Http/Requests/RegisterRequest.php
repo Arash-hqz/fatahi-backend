@@ -15,11 +15,27 @@ class RegisterRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
-            'email' => ['required', 'email', 'unique:users,email'],
+            'email' => [
+                'nullable',
+                'email',
+                'unique:users,email',
+                'required_without:phone',
+            ],
             'password' => ['required', 'string', 'min:6'],
-            'phone' => ['nullable', 'string'],
-            'role' => ['nullable', 'in:admin,user'],
-            'active' => ['nullable', 'boolean'],
+            'phone' => [
+                'nullable',
+                'string',
+                'required_without:email',
+            ],
         ];
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            if ($this->filled('email') && $this->filled('phone')) {
+                $validator->errors()->add('email', 'Provide only one of email or phone.');
+            }
+        });
     }
 }

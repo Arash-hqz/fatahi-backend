@@ -11,6 +11,19 @@ class UserRepository
         return User::all();
     }
 
+    public function create(array $data)
+    {
+        return User::create($data);
+    }
+
+    public function update($id, array $data)
+    {
+        $user = User::find($id);
+        if (! $user) return null;
+        $user->update($data);
+        return $user;
+    }
+
     public function find($id)
     {
         return User::find($id);
@@ -29,8 +42,13 @@ class UserRepository
     {
         $user = User::find($id);
         if (! $user) return null;
-        $user->role = $role;
-        $user->save();
+        // Use Spatie roles/permissions instead of storing raw role
+        if (method_exists($user, 'syncRoles')) {
+            $user->syncRoles([$role]);
+        } else {
+            $user->role = $role;
+            $user->save();
+        }
         return $user;
     }
 }

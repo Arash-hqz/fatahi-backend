@@ -13,7 +13,7 @@ class UserResource extends JsonResource
             'name' => $this->name ?? null,
             'email' => $this->email ?? null,
             'phone' => $this->phone ?? null,
-            'role' => $this->role ?? 'user',
+            'role' => method_exists($this, 'getRoleNames') ? ($this->getRoleNames()->first() ?? 'user') : ($this->role ?? 'user'),
             'active' => (bool) $this->active,
             'createdAt' => $this->created_at?->toIso8601String(),
         ];

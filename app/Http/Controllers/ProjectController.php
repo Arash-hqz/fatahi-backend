@@ -4,63 +4,57 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateProjectRequest;
 use App\Http\Resources\ProjectResource;
-use App\Models\Project;
+use App\Services\ProjectService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
+    protected $service;
+
+    public function __construct(ProjectService $service)
+    {
+        $this->service = $service;
+    }
+
     public function index()
     {
-        return ProjectResource::collection(Project::all());
+        $collection = ProjectResource::collection($this->service->all());
+        $data = $collection->toArray(request());
+        if (! auth()->check()) {
+            $keys = ['id', 'title', 'status', 'imageUrl', 'createdAt'];
+            $data = array_map(fn($item) => array_intersect_key($item, array_flip($keys)), $data);
+        }
+        return response()->json($data);
     }
 
     public function store(CreateProjectRequest $request)
     {
         $data = $request->validated();
-        $imageUrl = null;
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('projects', 'public');
-            $imageUrl = Storage::url($path);
-        }
+        $image = $request->file('image') ?? null;
+        $project = $this->service->create($data, $image);
 
-        $project = Project::create([
-            'title' => $data['title'],
-            'description' => $data['description'] ?? null,
-            'status' => $data['status'] ?? null,
-            'image' => $path ?? null,
-        ]);
-
-        $resp = new ProjectResource($project);
-        $arr = $resp->toArray(request());
-        $arr['imageUrl'] = $imageUrl;
-
-        return response()->json($arr, 201);
+        return (new ProjectResource($project))->response()->setStatusCode(201);
     }
 
     public function show($id)
     {
-        $project = Project::find($id);
+        $project = $this->service->find($id);
         if (! $project) return response()->json(['message' => 'Not found'], 404);
-        $resp = new ProjectResource($project);
-        $arr = $resp->toArray(request());
-        $arr['imageUrl'] = $project->image ? Storage::url($project->image) : null;
-        return $arr;
+        return new ProjectResource($project);
     }
 
     public function update(Request $request, $id)
     {
-        $project = Project::find($id);
+        $project = $this->service->find($id);
         if (! $project) return response()->json(['message' => 'Not found'], 404);
-        $project->update($request->all());
-        return new ProjectResource($project);
+        $image = $request->file('image') ?? null;
+        $updated = $this->service->update($id, $request->all(), $image);
+        return new ProjectResource($updated);
     }
 
     public function destroy($id)
     {
-        $project = Project::find($id);
-        if (! $project) return response()->json(['message' => 'Not found'], 404);
-        $project->delete();
-        return response()->json(['message' => 'Deleted']);
+        if ($this->service->delete($id)) return response()->json(['message' => 'Deleted']);
+        return response()->json(['message' => 'Not found'], 404);
     }
 }
