@@ -123,4 +123,13 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | CORS Allowed Origins
+    |--------------------------------------------------------------------------
+    | Comma-separated list of allowed origins for CORS responses. Use '*' to
+    | allow all. Example: https://example.com,https://admin.example.com
+    */
+    'cors_origin' => env('CORS_ORIGIN', '*'),
+
 ];
