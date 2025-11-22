@@ -12,6 +12,11 @@ class ArticleRepository implements ArticleRepositoryInterface
         return Article::all();
     }
 
+    public function paginate($perPage = 15)
+    {
+        return Article::paginate($perPage);
+    }
+
     public function find($id)
     {
         return Article::find($id);

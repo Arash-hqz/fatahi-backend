@@ -23,6 +23,11 @@ class ArticleService implements ArticleServiceInterface
         return $this->repo->all();
     }
 
+    public function paginate($perPage = 15)
+    {
+        return $this->repo->paginate($perPage);
+    }
+
     public function find($id)
     {
         return $this->repo->find($id);

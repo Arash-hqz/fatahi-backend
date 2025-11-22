@@ -18,24 +18,28 @@ class ArticleController extends Controller
     }
 
     /**
-     * List articles.
+     * List articles with optional pagination.
      * @OA\Get(
      *   path="/guest/articles",
      *   tags={"Articles"},
      *   summary="List articles",
-     *   description="Retrieve article list. If unauthenticated only core fields are returned.",
-     *   @OA\Response(response=200, description="OK", @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Article")))
+     *   description="Retrieve article list. Supports pagination via `page` and `per_page` query parameters. If unauthenticated only core fields are returned.",
+     *   @OA\Parameter(name="page", in="query", @OA\Schema(type="integer"), description="Page number"),
+     *   @OA\Parameter(name="per_page", in="query", @OA\Schema(type="integer"), description="Items per page"),
+    *   @OA\Response(response=200, description="OK", @OA\JsonContent(ref="#/components/schemas/PaginatedArticles"))
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
-        $collection = ArticleResource::collection($this->service->all());
-        $data = $collection->toArray(request());
-        if (! auth()->check()) {
-            $keys = ['id', 'title', 'slug', 'coverUrl', 'createdAt'];
-            $data = array_map(fn($item) => array_intersect_key($item, array_flip($keys)), $data);
-        }
-        return response()->json($data);
+        $perPage = (int) $request->query('per_page', 15);
+        if ($perPage <= 0) $perPage = 15;
+
+        $paginator = $this->service->paginate($perPage);
+
+        // Use ArticleCollection to format the paginated result
+        $collection = new \App\Http\Resources\ArticleCollection($paginator);
+
+        return $collection;
     }
 
     /**

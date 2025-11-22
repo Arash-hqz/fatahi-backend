@@ -18,18 +18,33 @@
                     "Articles"
                 ],
                 "summary": "List articles",
-                "description": "Retrieve article list. If unauthenticated only core fields are returned.",
+                "description": "Retrieve article list. Supports pagination via `page` and `per_page` query parameters. If unauthenticated only core fields are returned.",
                 "operationId": "bc27b636a9dda48229d8838138fce6eb",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Article"
-                                    }
+                                    "$ref": "#/components/schemas/Article"
                                 }
                             }
                         }
@@ -224,7 +239,7 @@
                 ],
                 "summary": "Register",
                 "description": "Create a new account with either email or phone. Sending both will trigger a validation error.",
-                "operationId": "a2724cee226bb70beb146dae0b1c31d3",
+                "operationId": "ed42f392010c301892e640067141676e",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -270,6 +285,55 @@
                     },
                     "422": {
                         "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login",
+                "description": "Authenticate using email and password to receive a bearer token.",
+                "operationId": "8cb7742ae98d0990acb2907c4e00bf24",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "alice@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "secret123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
                     }
                 }
             }
