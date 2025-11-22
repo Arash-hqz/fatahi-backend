@@ -25,14 +25,6 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
-    public function register(RegisterRequest $request)
-    {
-        $data = $request->validated();
-        $user = $this->service->create($data);
-
-        return (new UserResource($user))->response()->setStatusCode(201);
-    }
-
     /**
      * Register a new user.
      * Rules: User must provide either email or phone (not both). Password minimum length is 6.
@@ -56,18 +48,14 @@ class AuthController extends Controller
      *   @OA\Response(response=422, description="Validation error")
      * )
      */
-    public function login(LoginRequest $request)
+    public function register(RegisterRequest $request)
     {
-        $email = $request->input('email');
-        $password = $request->input('password');
+        $data = $request->validated();
+        $user = $this->service->create($data);
 
-        $token = $this->authService->login($email, $password);
-        if (! $token) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
-        }
-
-        return new AuthResponseResource(['access_token' => $token, 'token_type' => 'bearer']);
+        return (new UserResource($user))->response()->setStatusCode(201);
     }
+
 
     /**
      * User login to obtain a JWT access token.
@@ -89,4 +77,17 @@ class AuthController extends Controller
      *   @OA\Response(response=401, description="Invalid credentials")
      * )
      */
+    public function login(LoginRequest $request)
+    {
+        $email = $request->input('email') ?? $request->input("phone");
+        $password = $request->input('password');
+
+        $token = $this->authService->login($email, $password);
+        if (! $token) {
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        }
+
+        return new AuthResponseResource(['access_token' => $token, 'token_type' => 'bearer']);
+    }
+
 }

@@ -7,9 +7,11 @@ use App\Models\User;
 
 class UserRepository implements UserRepositoryInterface
 {
-    public function findByEmail(string $email): ?User
+    public function findByIdentifier(string $identifier): ?User
     {
-        return User::where('email', $email)->first();
+        return User::where('email', $identifier)
+        ->orWhere('phone', $identifier)
+        ->first();
     }
 
     public function create(array $data): User

@@ -21,9 +21,9 @@ class AuthService implements AuthServiceInterface
         return $this->users->create($data);
     }
 
-    public function login(string $email, string $password): ?string
+    public function login(string $identifier, string $password): ?string
     {
-        $user = $this->users->findByEmail($email);
+        $user = $this->users->findByIdentifier($identifier);
         if (! $user) return null;
         if (! Hash::check($password, $user->password)) return null;
 

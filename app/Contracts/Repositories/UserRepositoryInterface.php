@@ -7,12 +7,12 @@ use App\Models\User;
 interface UserRepositoryInterface
 {
     /**
-     * Find a user by email
+     * Find a user by identifier
      *
-     * @param string $email
+     * @param string $identifier
      * @return User|null
      */
-    public function findByEmail(string $email): ?User;
+    public function findByIdentifier(string $identifier): ?User;
 
     /**
      * Create a new user
