@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+
+use App\Rules\Mobile;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterRequest extends FormRequest
@@ -21,11 +23,13 @@ class RegisterRequest extends FormRequest
                 'unique:users,email',
                 'required_without:phone',
             ],
-            'password' => ['required', 'string', 'min:6'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
             'phone' => [
                 'nullable',
                 'string',
+                'unique:users,phone',
                 'required_without:email',
+                new Mobile()
             ],
         ];
     }
@@ -33,9 +37,11 @@ class RegisterRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            if ($this->filled('email') && $this->filled('phone')) {
-                $validator->errors()->add('email', 'Provide only one of email or phone.');
+            $fields = $this->only(['email', 'phone']);
+            if (count($fields) == 0 or count($fields) == 2) {
+                $validator->errors()->add('email', 'Either email or phone must be provided, but not both.');
             }
+            return $validator;
         });
     }
 }

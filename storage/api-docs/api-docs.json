@@ -251,18 +251,29 @@
                                 ],
                                 "properties": {
                                     "name": {
+                                        "description": "Full name of the user.",
                                         "type": "string",
                                         "example": "Alice"
                                     },
                                     "email": {
+                                        "description": "Email address (optional). Required if `phone` is not provided. Must be unique.",
                                         "type": "string",
+                                        "format": "email",
                                         "example": "alice@example.com"
                                     },
                                     "phone": {
+                                        "description": "Mobile phone in international format (optional). Required if `email` is not provided. Must be unique. Validated with regex /^\\\\+?[1-9]\\\\d{7,14}$/ (E.164-like).",
                                         "type": "string",
+                                        "pattern": "^\\\\+?[1-9]\\\\d{7,14}$",
                                         "example": "+15551234567"
                                     },
                                     "password": {
+                                        "description": "Account password (minimum 6 characters).",
+                                        "type": "string",
+                                        "example": "secret123"
+                                    },
+                                    "password_confirmation": {
+                                        "description": "Password confirmation (if used).",
                                         "type": "string",
                                         "example": "secret123"
                                     }
@@ -274,7 +285,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Created",
+                        "description": "Created - returns created user resource",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -284,7 +295,7 @@
                         }
                     },
                     "422": {
-                        "description": "Validation error"
+                        "description": "Validation error - missing/invalid fields or uniqueness constraint"
                     }
                 }
             }

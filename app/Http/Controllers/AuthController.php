@@ -34,19 +34,20 @@ class AuthController extends Controller
      *   tags={"Auth"},
      *   summary="Register",
      *   description="Create a new account with either email or phone. Sending both will trigger a validation error.",
-     *   @OA\RequestBody(
-     *     required=true,
-     *     @OA\JsonContent(
-     *       required={"name","password"},
-     *       @OA\Property(property="name", type="string", example="Alice"),
-     *       @OA\Property(property="email", type="string", example="alice@example.com"),
-     *       @OA\Property(property="phone", type="string", example="+15551234567"),
-     *       @OA\Property(property="password", type="string", example="secret123"),
-     *     )
-     *   ),
-     *   @OA\Response(response=201, description="Created", @OA\JsonContent(ref="#/components/schemas/User")),
-     *   @OA\Response(response=422, description="Validation error")
-     * )
+    *   @OA\RequestBody(
+    *     required=true,
+    *     @OA\JsonContent(
+    *       required={"name","password"},
+    *       @OA\Property(property="name", type="string", example="Alice", description="Full name of the user."),
+    *       @OA\Property(property="email", type="string", format="email", example="alice@example.com", description="Email address (optional). Required if `phone` is not provided. Must be unique."),
+    *       @OA\Property(property="phone", type="string", example="+15551234567", description="Mobile phone in international format (optional). Required if `email` is not provided. Must be unique. Validated with regex /^\\+?[1-9]\\d{7,14}$/ (E.164-like).", pattern="^\\+?[1-9]\\d{7,14}$"),
+    *       @OA\Property(property="password", type="string", example="secret123", description="Account password (minimum 6 characters)."),
+    *       @OA\Property(property="password_confirmation", type="string", example="secret123", description="Password confirmation (if used).")
+    *     )
+    *   ),
+    *   @OA\Response(response=201, description="Created - returns created user resource", @OA\JsonContent(ref="#/components/schemas/User")),
+    *   @OA\Response(response=422, description="Validation error - missing/invalid fields or uniqueness constraint")
+    * )
      */
     public function register(RegisterRequest $request)
     {
