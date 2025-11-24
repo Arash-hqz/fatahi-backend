@@ -21,14 +21,14 @@ class DatabaseSeeder extends Seeder
         // Roles & permissions
         $this->call(RolesAndPermissionsSeeder::class);
 
-        // Create some users
-            $test = User::where('email', 'test@example.com')->first();
-            if (! $test) {
-                $test = User::factory()->create([
-                    'name' => 'Test User',
-                    'email' => 'test@example.com',
-                ]);
-            }
+        $test = User::where('email', 'ghaffariarash369@gmail.com')->first();
+        if (! $test) {
+            $test = User::factory()->create([
+                'name' => 'arash ghaffari',
+                'email' => 'ghaffariarash369@gmail.com',
+                'password' => bcrypt('arash36988'), // password
+            ]);
+        }
 
         // give test user admin role
         if (method_exists($test, 'assignRole')) {
