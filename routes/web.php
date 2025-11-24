@@ -10,7 +10,7 @@ Route::get('/', function () {
 
 Route::prefix('deployment')->group(function(){
     Route::get('/migrate', function(){
-        Artisan::call('migrate:fresh');
+        Artisan::call('migrate:fresh --seed');
     });
     Route::get('/link', function(){
         Artisan::call('storage:link');
